@@ -33,11 +33,13 @@ function Orb() {
       group.current.rotation.y = t * 0.11;
       group.current.rotation.z = Math.sin(t * 0.14) * 0.16;
 
-      // sits off to the right so it never fights the headline for legibility
+      // Sits off to the right so it never fights the headline for legibility.
+      // Portrait viewports get a smaller offset, otherwise it slides off-frame.
       const px = state.pointer.x;
       const py = state.pointer.y;
+      const offset = state.viewport.aspect < 1 ? OFFSET_X * 0.45 : OFFSET_X;
       group.current.rotation.x += (py * 0.28 - group.current.rotation.x) * 0.03;
-      group.current.position.x += (OFFSET_X + px * 0.3 - group.current.position.x) * 0.03;
+      group.current.position.x += (offset + px * 0.3 - group.current.position.x) * 0.03;
     }
     if (wire.current) {
       wire.current.rotation.y = -t * 0.07;
@@ -164,13 +166,14 @@ function Rig() {
   return null;
 }
 
-export default function HeroScene() {
+export default function HeroScene({ active = true }: { active?: boolean }) {
   return (
     <Canvas
       dpr={[1, 1.75]}
       camera={{ position: [0, 0, 5.6], fov: 45 }}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
       style={{ pointerEvents: 'none' }}
+      frameloop={active ? 'always' : 'never'}
     >
       <fog attach="fog" args={['#04050a', 7, 20]} />
       <Orb />

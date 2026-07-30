@@ -436,6 +436,21 @@ section {
   border-color: var(--magenta);
 }
 
+/* quieter third action — present without competing with the two above */
+.btn--ghost {
+  border-color: var(--line);
+  color: var(--ink-dim);
+}
+
+.btn--ghost::before {
+  background: var(--amber);
+}
+
+.btn--ghost:hover {
+  color: var(--void);
+  border-color: var(--amber);
+}
+
 /* underline-sweep inline link */
 .link {
   position: relative;

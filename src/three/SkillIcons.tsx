@@ -336,19 +336,22 @@ function GlyphTile({
       <mesh geometry={tile} position={[0, 0, -0.14]}>
         <Holo color={color} intensity={0.3} metalness={0.45} roughness={0.28} />
       </mesh>
-      {/* glyph on both faces so the tile reads from either side */}
+      {/* Glyph on both faces so the tile reads from either side.
+          depthWrite is off on every plane here: their transparent areas would
+          otherwise still write depth and knock rectangular holes in whatever
+          sits behind the tile. */}
       <mesh position={[0, 0, 0.115]}>
         <planeGeometry args={[1.4, 1.4]} />
-        <meshBasicMaterial map={tex} transparent toneMapped={false} />
+        <meshBasicMaterial map={tex} transparent toneMapped={false} depthWrite={false} />
       </mesh>
       <mesh position={[0, 0, -0.255]} rotation={[0, Math.PI, 0]}>
         <planeGeometry args={[1.4, 1.4]} />
-        <meshBasicMaterial map={tex} transparent toneMapped={false} />
+        <meshBasicMaterial map={tex} transparent toneMapped={false} depthWrite={false} />
       </mesh>
       {/* edge glow */}
       <mesh position={[0, 0, -0.07]} scale={1.045}>
         <planeGeometry args={[1.68, 1.68]} />
-        <meshBasicMaterial color={accent} transparent opacity={0.06} />
+        <meshBasicMaterial color={accent} transparent opacity={0.06} depthWrite={false} />
       </mesh>
     </group>
   );
@@ -376,18 +379,21 @@ function PrismaIcon({ color, accent }: { color: string; accent: string }) {
 
   return (
     <group scale={0.9}>
+      {/* Glassy look via translucency + clearcoat rather than `transmission`:
+          the transmission pass renders a backdrop buffer that leaked a visible
+          rectangle over the scene behind this icon. */}
       <mesh geometry={geom} position={[0, 0, -0.18]}>
         <meshPhysicalMaterial
           color={color}
           emissive={accent}
-          emissiveIntensity={0.16}
-          metalness={0.1}
-          roughness={0.08}
-          transmission={0.72}
-          thickness={0.9}
-          ior={1.6}
+          emissiveIntensity={0.22}
+          metalness={0.15}
+          roughness={0.07}
           clearcoat={1}
-          clearcoatRoughness={0.06}
+          clearcoatRoughness={0.05}
+          transparent
+          opacity={0.62}
+          depthWrite={false}
         />
       </mesh>
       {/* inner core so the glass has something to refract */}
@@ -413,7 +419,9 @@ function PostgresIcon({ color, accent }: { color: string; accent: string }) {
             <cylinderGeometry args={[0.72, 0.72, 0.2, 48]} />
             <Holo color={color} metalness={0.62} roughness={0.24} />
           </mesh>
-          <mesh position={[0, 0.11, 0]}>
+          {/* laid flat around the platter rim — a torus defaults to the XY
+              plane, which would stand it up as a vertical hoop */}
+          <mesh position={[0, 0.1, 0]} rotation={[-Math.PI / 2, 0, 0]}>
             <torusGeometry args={[0.72, 0.022, 10, 56]} />
             <Holo color={accent} intensity={0.9} />
           </mesh>

@@ -6,8 +6,13 @@ export const PROFILE = {
   email: 'gyldenish@gmail.com',
   github: 'https://github.com/Denish099',
   leetcode: 'https://leetcode.com/u/Denish-goyal/',
+  linkedin: 'https://www.linkedin.com/in/denish-53b833245/',
+  codeforces: 'https://codeforces.com/profile/gyldenish',
+  resume: '/denish-goyal-resume.pdf',
   githubHandle: 'Denish099',
   leetcodeHandle: 'Denish-goyal',
+  linkedinHandle: 'denish-53b833245',
+  codeforcesHandle: 'gyldenish',
   location: 'India',
   education: {
     school: 'University of Petroleum and Energy Studies',

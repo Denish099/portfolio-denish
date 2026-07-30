@@ -2,6 +2,7 @@ import { Suspense, useEffect, useRef } from 'react';
 import HeroScene from '../three/HeroScene';
 import { PROFILE } from '../lib/data';
 import { gsap, prefersReducedMotion } from '../lib/motion';
+import { useInView } from '../lib/useInView';
 import './hero.css';
 
 const SCRAMBLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&/\\<>';
@@ -43,6 +44,7 @@ function ScrambleWord({ text, className }: { text: string; className?: string })
 
 export default function Hero({ ready }: { ready: boolean }) {
   const root = useRef<HTMLElement>(null);
+  const canvas = useInView<HTMLDivElement>();
 
   useEffect(() => {
     if (!ready) return;
@@ -80,9 +82,9 @@ export default function Hero({ ready }: { ready: boolean }) {
 
   return (
     <section className="hero" id="top" ref={root}>
-      <div className="hero__canvas">
+      <div className="hero__canvas" ref={canvas.ref}>
         <Suspense fallback={null}>
-          <HeroScene />
+          <HeroScene active={canvas.inView} />
         </Suspense>
       </div>
 
@@ -119,6 +121,15 @@ export default function Hero({ ready }: { ready: boolean }) {
             </a>
             <a className="btn" href="#contact" data-cursor="Say hi">
               Get in touch
+            </a>
+            <a
+              className="btn btn--ghost"
+              href={PROFILE.resume}
+              target="_blank"
+              rel="noreferrer"
+              data-cursor="Open PDF"
+            >
+              Résumé ↗
             </a>
           </div>
         </div>

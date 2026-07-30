@@ -2,12 +2,14 @@ import { Suspense, useCallback, useRef, useState } from 'react';
 import SkillsScene, { RingCtl, TAU } from '../three/SkillsScene';
 import { SKILLS } from '../lib/data';
 import { useReveal } from '../lib/motion';
+import { useInView } from '../lib/useInView';
 import './skills.css';
 
 export default function Skills() {
   const [hovered, setHovered] = useState<number | null>(null);
   const [selected, setSelected] = useState(0);
   const revealRef = useReveal<HTMLDivElement>();
+  const canvas = useInView<HTMLDivElement>();
 
   const ctl = useRef<RingCtl>({
     rot: 0,
@@ -106,6 +108,7 @@ export default function Skills() {
 
         <div
           className="skills__canvas"
+          ref={canvas.ref}
           onPointerDown={onPointerDown}
           onPointerMove={onPointerMove}
           onPointerUp={endDrag}
@@ -125,6 +128,7 @@ export default function Skills() {
               selected={selected}
               onHover={setHovered}
               onSelect={select}
+              active={canvas.inView}
             />
           </Suspense>
 

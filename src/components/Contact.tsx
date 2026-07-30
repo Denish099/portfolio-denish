@@ -5,7 +5,10 @@ import './contact.css';
 
 const LINKS = [
   { label: 'GitHub', handle: PROFILE.githubHandle, href: PROFILE.github },
+  { label: 'LinkedIn', handle: PROFILE.linkedinHandle, href: PROFILE.linkedin },
   { label: 'LeetCode', handle: PROFILE.leetcodeHandle, href: PROFILE.leetcode },
+  { label: 'Codeforces', handle: PROFILE.codeforcesHandle, href: PROFILE.codeforces },
+  { label: 'Résumé', handle: 'denish-goyal-resume.pdf', href: PROFILE.resume },
   { label: 'Email', handle: PROFILE.email, href: `mailto:${PROFILE.email}` },
 ];
 

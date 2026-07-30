@@ -47,7 +47,7 @@ function CameraAim() {
   const { camera } = useThree();
   useFrame((state) => {
     camera.position.x += (state.pointer.x * 0.7 - camera.position.x) * 0.03;
-    camera.lookAt(0, 0, 0);
+    camera.lookAt(0, 0.35, 0);
   });
   return null;
 }
@@ -55,6 +55,7 @@ function CameraAim() {
 function SkillNode({
   index,
   angle,
+  baseY,
   hovered,
   selected,
   onHover,
@@ -62,6 +63,7 @@ function SkillNode({
 }: {
   index: number;
   angle: number;
+  baseY: number;
   hovered: boolean;
   selected: boolean;
   onHover: (i: number | null) => void;
@@ -79,11 +81,11 @@ function SkillNode({
     if (!g || !inr) return;
 
     // gentle bob, offset per node
-    const bob = Math.sin(t * 0.85 + index * 1.7) * 0.14;
+    const bob = Math.sin(t * 0.85 + index * 1.7) * 0.1;
     const push = active ? 0.55 : 0;
     const r = RADIUS + push;
 
-    g.position.set(Math.sin(angle) * r, bob + (active ? 0.18 : 0), Math.cos(angle) * r);
+    g.position.set(Math.sin(angle) * r, baseY + bob + (active ? 0.18 : 0), Math.cos(angle) * r);
     g.rotation.y = angle;
 
     // idle tumble; settles upright when active so the shape reads clearly
@@ -131,8 +133,10 @@ function SkillNode({
         />
       </mesh>
 
+      {/* No distanceFactor on the label: it keeps a constant screen size, which
+          reads as a HUD and stays sane on small canvases. */}
       {active && (
-        <Html center distanceFactor={9} position={[0, 1.5, 0]} zIndexRange={[40, 0]}>
+        <Html center position={[0, 1.55, 0]} zIndexRange={[40, 0]}>
           <div className="sk3d-label">
             <span className="sk3d-label__name">{skill.label}</span>
             <span className="sk3d-label__cat">{skill.category}</span>
@@ -157,7 +161,19 @@ function Ring({
   onSelect: (i: number) => void;
 }) {
   const group = useRef<THREE.Group>(null);
-  const angles = useMemo(() => SKILLS.map((_, i) => (i / SKILLS.length) * TAU), []);
+
+  /**
+   * Nodes sit on an undulating ring rather than a flat one: it fills the frame
+   * vertically and stops neighbours from stacking up in a single band.
+   */
+  const layout = useMemo(
+    () =>
+      SKILLS.map((_, i) => {
+        const angle = (i / SKILLS.length) * TAU;
+        return { angle, baseY: Math.sin(angle * 2) * 1.2 };
+      }),
+    [],
+  );
 
   useFrame((_, dt) => {
     const c = ctl.current;
@@ -180,12 +196,14 @@ function Ring({
   });
 
   return (
-    <group ref={group}>
-      {angles.map((a, i) => (
+    // lifted a little so the nearest icon isn't clipped by the canvas floor
+    <group ref={group} position={[0, 0.4, 0]}>
+      {layout.map(({ angle, baseY }, i) => (
         <SkillNode
           key={SKILLS[i].id}
           index={i}
-          angle={a}
+          angle={angle}
+          baseY={baseY}
           hovered={hovered === i}
           selected={selected === i}
           onHover={onHover}
@@ -196,17 +214,10 @@ function Ring({
   );
 }
 
-/** Faint horizon grid so the ring feels anchored in space. */
+/** Faint horizon grid so the ring feels anchored in space. Fog does the
+ *  fading, so there's no backing plane to leave a hard edge. */
 function Floor() {
-  return (
-    <>
-      <gridHelper args={[46, 46, '#1b3766', '#101f3d']} position={[0, -2.05, 0]} />
-      <mesh rotation={[-Math.PI / 2, 0, 0]} position={[0, -2.06, 0]}>
-        <circleGeometry args={[10, 64]} />
-        <meshBasicMaterial color="#04050a" transparent opacity={0.55} />
-      </mesh>
-    </>
-  );
+  return <gridHelper args={[46, 46, '#1b3766', '#101f3d']} position={[0, -2.4, 0]} />;
 }
 
 export default function SkillsScene({
@@ -215,22 +226,25 @@ export default function SkillsScene({
   selected,
   onHover,
   onSelect,
+  active = true,
 }: {
   ctl: React.MutableRefObject<RingCtl>;
   hovered: number | null;
   selected: number;
   onHover: (i: number | null) => void;
   onSelect: (i: number) => void;
+  active?: boolean;
 }) {
   return (
     <Canvas
       dpr={[1, 1.7]}
-      camera={{ position: [0, 0.95, 13.2], fov: 38 }}
+      camera={{ position: [0, 1.05, 14], fov: 37 }}
       gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      frameloop={active ? 'always' : 'never'}
     >
       {/* fog starts beyond the front of the ring, so near icons stay crisp
           while the far side of the carousel recedes into the dark */}
-      <fog attach="fog" args={['#05060d', 12.5, 26]} />
+      <fog attach="fog" args={['#05060d', 13.5, 27]} />
       <ProceduralEnv />
       <CameraAim />
 
