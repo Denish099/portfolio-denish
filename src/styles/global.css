@@ -1,0 +1,575 @@
+/* ============================================================
+   DENISH GOYAL — PORTFOLIO
+   Design language: 80s/90s anime + cyberpunk terminal
+   ============================================================ */
+
+:root {
+  /* --- core palette --- */
+  --void: #04050a;
+  --bg: #07080f;
+  --bg-2: #0b0d18;
+  --panel: rgba(16, 19, 34, 0.62);
+  --line: rgba(140, 160, 220, 0.14);
+  --line-hot: rgba(0, 240, 255, 0.32);
+
+  --ink: #eef1fa;
+  --ink-dim: #98a0bd;
+  --ink-faint: #5b6485;
+
+  --cyan: #00f0ff;
+  --magenta: #ff2d7e;
+  --amber: #ffb43a;
+  --violet: #8b5cff;
+  --lime: #b8ff3a;
+
+  /* --- type --- */
+  --f-display: 'Chakra Petch', 'Space Grotesk', system-ui, sans-serif;
+  --f-body: 'Space Grotesk', system-ui, -apple-system, sans-serif;
+  --f-mono: 'JetBrains Mono', ui-monospace, 'SF Mono', monospace;
+
+  /* --- motion --- */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.76, 0, 0.24, 1);
+
+  /* --- layout --- */
+  --gut: clamp(1.25rem, 4vw, 4.5rem);
+  --maxw: 1560px;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+* {
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  -webkit-text-size-adjust: 100%;
+  scroll-behavior: auto; /* Lenis owns scrolling */
+}
+
+body {
+  background: var(--void);
+  color: var(--ink);
+  font-family: var(--f-body);
+  font-size: 16px;
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+/* Lenis */
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+.lenis.lenis-stopped {
+  overflow: hidden;
+}
+
+img,
+svg,
+canvas {
+  display: block;
+  max-width: 100%;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+button {
+  font: inherit;
+  color: inherit;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+::selection {
+  background: var(--cyan);
+  color: var(--void);
+}
+
+/* hide native cursor on precise pointers — we draw our own */
+@media (hover: hover) and (pointer: fine) {
+  body.custom-cursor,
+  body.custom-cursor * {
+    cursor: none !important;
+  }
+}
+
+/* ============================================================
+   TYPOGRAPHY PRIMITIVES
+   ============================================================ */
+
+.display {
+  font-family: var(--f-display);
+  font-weight: 700;
+  line-height: 0.86;
+  letter-spacing: -0.03em;
+  text-transform: uppercase;
+}
+
+.mono {
+  font-family: var(--f-mono);
+  font-size: 0.7rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--ink-faint);
+}
+
+.eyebrow {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.3em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+}
+
+.eyebrow::before {
+  content: '';
+  width: clamp(1.5rem, 4vw, 3.5rem);
+  height: 1px;
+  background: linear-gradient(90deg, transparent, var(--cyan));
+}
+
+.section-title {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: clamp(2.4rem, 7.5vw, 6.5rem);
+  line-height: 0.9;
+  letter-spacing: -0.035em;
+  text-transform: uppercase;
+}
+
+.lede {
+  font-size: clamp(1rem, 1.5vw, 1.28rem);
+  line-height: 1.62;
+  color: var(--ink-dim);
+  max-width: 62ch;
+}
+
+.outline-text {
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(152, 160, 189, 0.45);
+}
+
+/* ============================================================
+   LAYOUT
+   ============================================================ */
+
+.shell {
+  position: relative;
+  z-index: 1;
+}
+
+section {
+  position: relative;
+  padding-inline: var(--gut);
+}
+
+.wrap {
+  max-width: var(--maxw);
+  margin-inline: auto;
+  width: 100%;
+}
+
+.section-head {
+  display: flex;
+  flex-direction: column;
+  gap: 1.1rem;
+  margin-bottom: clamp(2.5rem, 6vw, 5rem);
+}
+
+.section-index {
+  font-family: var(--f-mono);
+  font-size: 0.68rem;
+  letter-spacing: 0.28em;
+  color: var(--ink-faint);
+}
+
+/* ============================================================
+   GLOBAL OVERLAYS — grain, scanlines, vignette, grid
+   ============================================================ */
+
+.fx-layer {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 90;
+}
+
+.fx-grain {
+  opacity: 0.05;
+  mix-blend-mode: overlay;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)'/%3E%3C/svg%3E");
+  animation: grain-shift 0.7s steps(3) infinite;
+}
+
+@keyframes grain-shift {
+  0% {
+    transform: translate(0, 0);
+  }
+  33% {
+    transform: translate(-2%, 1.5%);
+  }
+  66% {
+    transform: translate(1.5%, -1%);
+  }
+  100% {
+    transform: translate(0, 0);
+  }
+}
+
+.fx-scanlines {
+  background: repeating-linear-gradient(
+    to bottom,
+    rgba(255, 255, 255, 0.028) 0px,
+    rgba(255, 255, 255, 0.028) 1px,
+    transparent 1px,
+    transparent 3px
+  );
+  opacity: 0.6;
+}
+
+.fx-vignette {
+  background: radial-gradient(
+    ellipse 120% 80% at 50% 45%,
+    transparent 40%,
+    rgba(2, 3, 8, 0.55) 88%,
+    rgba(2, 3, 8, 0.85) 100%
+  );
+}
+
+/* slow drifting sweep, like a CRT refresh */
+.fx-sweep::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 34vh;
+  background: linear-gradient(
+    to bottom,
+    transparent,
+    rgba(0, 240, 255, 0.028),
+    transparent
+  );
+  animation: sweep 9s linear infinite;
+}
+
+@keyframes sweep {
+  0% {
+    top: -40vh;
+  }
+  100% {
+    top: 110vh;
+  }
+}
+
+/* fixed backdrop grid that everything sits on */
+.backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  background:
+    radial-gradient(ellipse 90% 60% at 78% 8%, rgba(139, 92, 255, 0.16), transparent 60%),
+    radial-gradient(ellipse 70% 55% at 12% 88%, rgba(255, 45, 126, 0.12), transparent 62%),
+    radial-gradient(ellipse 80% 50% at 50% 50%, rgba(0, 240, 255, 0.05), transparent 70%),
+    var(--void);
+}
+
+.backdrop::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background-image:
+    linear-gradient(to right, rgba(140, 160, 220, 0.055) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(140, 160, 220, 0.055) 1px, transparent 1px);
+  background-size: 74px 74px;
+  mask-image: radial-gradient(ellipse 100% 75% at 50% 40%, black 20%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse 100% 75% at 50% 40%, black 20%, transparent 78%);
+}
+
+/* ============================================================
+   CUSTOM CURSOR
+   ============================================================ */
+
+.cursor-dot,
+.cursor-ring {
+  position: fixed;
+  top: 0;
+  left: 0;
+  pointer-events: none;
+  z-index: 9999;
+  will-change: transform;
+}
+
+.cursor-dot {
+  width: 5px;
+  height: 5px;
+  margin: -2.5px 0 0 -2.5px;
+  border-radius: 50%;
+  background: var(--cyan);
+  box-shadow: 0 0 12px var(--cyan);
+}
+
+.cursor-ring {
+  width: 34px;
+  height: 34px;
+  margin: -17px 0 0 -17px;
+  border: 1px solid rgba(0, 240, 255, 0.55);
+  border-radius: 50%;
+  transition:
+    width 0.32s var(--ease-out),
+    height 0.32s var(--ease-out),
+    margin 0.32s var(--ease-out),
+    border-color 0.32s var(--ease-out),
+    background-color 0.32s var(--ease-out),
+    opacity 0.32s var(--ease-out);
+}
+
+.cursor-ring.is-hot {
+  width: 68px;
+  height: 68px;
+  margin: -34px 0 0 -34px;
+  border-color: var(--magenta);
+  background: rgba(255, 45, 126, 0.09);
+}
+
+.cursor-ring.is-hidden {
+  opacity: 0;
+}
+
+.cursor-label {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 9999;
+  pointer-events: none;
+  font-family: var(--f-mono);
+  font-size: 0.55rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+  color: var(--void);
+  background: var(--cyan);
+  padding: 0.28rem 0.5rem;
+  transform-origin: left center;
+  will-change: transform;
+  white-space: nowrap;
+}
+
+@media (hover: none), (pointer: coarse) {
+  .cursor-dot,
+  .cursor-ring,
+  .cursor-label {
+    display: none;
+  }
+}
+
+/* ============================================================
+   BUTTONS / LINKS
+   ============================================================ */
+
+.btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.8rem;
+  padding: 1.05rem 1.9rem;
+  font-family: var(--f-mono);
+  font-size: 0.72rem;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  border: 1px solid var(--line-hot);
+  color: var(--ink);
+  overflow: hidden;
+  isolation: isolate;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  transition: color 0.4s var(--ease-out), border-color 0.4s var(--ease-out);
+}
+
+.btn::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: var(--cyan);
+  transform: translateY(101%);
+  transition: transform 0.5s var(--ease-out);
+}
+
+.btn:hover {
+  color: var(--void);
+  border-color: var(--cyan);
+}
+
+.btn:hover::before {
+  transform: translateY(0);
+}
+
+.btn--solid {
+  background: var(--cyan);
+  color: var(--void);
+  border-color: var(--cyan);
+}
+
+.btn--solid::before {
+  background: var(--magenta);
+}
+
+.btn--solid:hover {
+  color: var(--ink);
+  border-color: var(--magenta);
+}
+
+/* underline-sweep inline link */
+.link {
+  position: relative;
+  display: inline-block;
+  padding-bottom: 2px;
+}
+
+.link::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  width: 100%;
+  height: 1px;
+  background: currentColor;
+  transform: scaleX(0);
+  transform-origin: right;
+  transition: transform 0.45s var(--ease-out);
+}
+
+.link:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+/* ============================================================
+   GLITCH TEXT
+   ============================================================ */
+
+.glitch {
+  position: relative;
+  display: inline-block;
+}
+
+.glitch__layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  user-select: none;
+}
+
+.glitch__layer--a {
+  color: var(--magenta);
+  mix-blend-mode: screen;
+  animation: glitch-a 3.6s steps(40) infinite;
+}
+
+.glitch__layer--b {
+  color: var(--cyan);
+  mix-blend-mode: screen;
+  animation: glitch-b 4.4s steps(40) infinite;
+}
+
+@keyframes glitch-a {
+  0%,
+  86%,
+  100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+  87% {
+    transform: translate(-4px, 2px);
+    clip-path: inset(12% 0 62% 0);
+    opacity: 0.9;
+  }
+  90% {
+    transform: translate(3px, -2px);
+    clip-path: inset(58% 0 18% 0);
+    opacity: 0.9;
+  }
+  93% {
+    transform: translate(-2px, 1px);
+    clip-path: inset(34% 0 44% 0);
+    opacity: 0.8;
+  }
+  96% {
+    transform: translate(0);
+    opacity: 0;
+  }
+}
+
+@keyframes glitch-b {
+  0%,
+  78%,
+  100% {
+    transform: translate(0);
+    clip-path: inset(0 0 0 0);
+    opacity: 0;
+  }
+  80% {
+    transform: translate(4px, -1px);
+    clip-path: inset(70% 0 8% 0);
+    opacity: 0.85;
+  }
+  84% {
+    transform: translate(-5px, 2px);
+    clip-path: inset(22% 0 54% 0);
+    opacity: 0.85;
+  }
+  88% {
+    transform: translate(2px, 0);
+    clip-path: inset(46% 0 30% 0);
+    opacity: 0.7;
+  }
+  92% {
+    opacity: 0;
+  }
+}
+
+/* ============================================================
+   SCROLL REVEAL BASE STATES (GSAP takes over)
+   ============================================================ */
+
+.reveal-line {
+  display: block;
+  overflow: hidden;
+}
+
+.reveal-line > * {
+  display: block;
+  will-change: transform;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001s !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001s !important;
+  }
+  .fx-grain,
+  .fx-sweep::after {
+    display: none;
+  }
+}

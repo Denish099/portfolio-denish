@@ -1,0 +1,181 @@
+.contact {
+  padding-block: clamp(5rem, 14vh, 10rem) 0;
+}
+
+.contact__title {
+  font-size: clamp(2.8rem, 10vw, 9rem);
+}
+
+/* ---------- big email ---------- */
+
+.contact__cta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 1.4rem 2rem;
+  padding-block: clamp(1.5rem, 4vw, 3rem);
+}
+
+.contact__email {
+  position: relative;
+  font-family: var(--f-display);
+  font-size: clamp(1.25rem, 4.6vw, 3.6rem);
+  font-weight: 600;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  color: var(--ink);
+  word-break: break-all;
+  transition: color 0.4s var(--ease-out);
+}
+
+.contact__email::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  bottom: -0.12em;
+  width: 100%;
+  height: 2px;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.contact__email:hover {
+  color: var(--cyan);
+}
+
+.contact__email:hover::after {
+  transform: scaleX(1);
+}
+
+.contact__copy {
+  padding: 0.6rem 1rem;
+  font-size: 0.58rem;
+  letter-spacing: 0.22em;
+  color: var(--ink-dim);
+  border: 1px solid var(--line);
+  transition: color 0.35s, border-color 0.35s, background-color 0.35s;
+}
+
+.contact__copy:hover {
+  color: var(--void);
+  background: var(--lime);
+  border-color: var(--lime);
+}
+
+/* ---------- link rows ---------- */
+
+.contact__links {
+  margin-top: clamp(2rem, 6vw, 4rem);
+  border-top: 1px solid var(--line);
+}
+
+.contact__link {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(90px, 140px) 1fr auto;
+  align-items: center;
+  gap: 1.5rem;
+  padding-block: clamp(1.1rem, 2.6vw, 1.8rem);
+  border-bottom: 1px solid var(--line);
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.contact__link::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  background: linear-gradient(90deg, rgba(0, 240, 255, 0.1), transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.62s var(--ease-out);
+}
+
+.contact__link:hover::before {
+  transform: translateX(0);
+}
+
+.contact__link-label {
+  font-size: 0.58rem;
+  letter-spacing: 0.24em;
+  color: var(--ink-faint);
+  transition: color 0.35s;
+}
+
+.contact__link:hover .contact__link-label {
+  color: var(--cyan);
+}
+
+.contact__link-handle {
+  font-family: var(--f-display);
+  font-size: clamp(1rem, 2.4vw, 1.7rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--ink-dim);
+  transition: color 0.35s var(--ease-out), transform 0.55s var(--ease-out);
+  word-break: break-all;
+}
+
+.contact__link:hover .contact__link-handle {
+  color: var(--ink);
+  transform: translateX(0.6rem);
+}
+
+.contact__link-arrow {
+  font-size: 1.1rem;
+  color: var(--ink-faint);
+  transition: transform 0.5s var(--ease-out), color 0.35s;
+}
+
+.contact__link:hover .contact__link-arrow {
+  color: var(--cyan);
+  transform: translate(4px, -4px);
+}
+
+/* ---------- footer ---------- */
+
+.foot {
+  margin-top: clamp(3rem, 9vw, 6rem);
+  padding-top: 1.4rem;
+  border-top: 1px solid var(--line);
+}
+
+.foot__row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem 2rem;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.foot__row .mono {
+  font-size: 0.56rem;
+  letter-spacing: 0.2em;
+}
+
+.foot__big {
+  margin-top: clamp(1.2rem, 3vw, 2rem);
+  /* must stay on one line — wrapping leaves a huge dead gap under the footer */
+  font-size: clamp(1.9rem, 12.2vw, 11rem);
+  line-height: 0.78;
+  white-space: nowrap;
+  color: transparent;
+  -webkit-text-stroke: 1px rgba(140, 160, 220, 0.12);
+  text-align: center;
+  overflow: hidden;
+  user-select: none;
+  transform: translateY(0.1em);
+}
+
+@media (max-width: 700px) {
+  .contact__link {
+    grid-template-columns: 1fr auto;
+    gap: 0.4rem 1rem;
+  }
+  .contact__link-label {
+    grid-column: 1 / -1;
+  }
+}

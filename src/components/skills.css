@@ -1,0 +1,294 @@
+.skills {
+  padding-block: clamp(5rem, 14vh, 10rem);
+}
+
+.skills__stage {
+  display: grid;
+  grid-template-columns: minmax(210px, 280px) 1fr;
+  gap: clamp(1.5rem, 4vw, 3.5rem);
+  align-items: stretch;
+  margin-top: clamp(1.5rem, 4vw, 2.5rem);
+}
+
+/* ---------- the list ---------- */
+
+.skills__list {
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid var(--line);
+}
+
+.skills__item {
+  position: relative;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  grid-template-areas:
+    'n name'
+    'n cat';
+  gap: 0 0.85rem;
+  align-items: center;
+  padding: 0.72rem 0.9rem;
+  text-align: left;
+  border-bottom: 1px solid var(--line);
+  overflow: hidden;
+  transition: padding-left 0.4s var(--ease-out);
+}
+
+.skills__item::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--sk);
+  opacity: 0;
+  transform: translateX(-100%);
+  transition: transform 0.5s var(--ease-out), opacity 0.4s var(--ease-out);
+}
+
+.skills__item::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 2px;
+  background: var(--sk);
+  transform: scaleY(0);
+  transition: transform 0.4s var(--ease-out);
+}
+
+.skills__item.is-active {
+  padding-left: 1.25rem;
+}
+
+.skills__item.is-active::before {
+  opacity: 0.09;
+  transform: translateX(0);
+}
+
+.skills__item.is-active::after {
+  transform: scaleY(1);
+}
+
+.skills__item-n {
+  grid-area: n;
+  font-size: 0.6rem;
+  color: var(--ink-faint);
+  transition: color 0.3s;
+}
+
+.skills__item-name {
+  grid-area: name;
+  font-family: var(--f-display);
+  font-size: 1.02rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+  transition: color 0.3s var(--ease-out);
+}
+
+.skills__item-cat {
+  grid-area: cat;
+  font-size: 0.52rem;
+  letter-spacing: 0.2em;
+  color: var(--ink-faint);
+  opacity: 0;
+  max-height: 0;
+  transition: opacity 0.35s var(--ease-out), max-height 0.35s var(--ease-out);
+}
+
+.skills__item.is-active .skills__item-name {
+  color: var(--ink);
+}
+
+.skills__item.is-active .skills__item-n {
+  color: var(--sk);
+}
+
+.skills__item.is-active .skills__item-cat {
+  opacity: 1;
+  max-height: 1.4rem;
+}
+
+/* ---------- the canvas ---------- */
+
+.skills__canvas {
+  position: relative;
+  min-height: clamp(420px, 62vh, 680px);
+  border: 1px solid var(--line);
+  background:
+    radial-gradient(ellipse 70% 60% at 50% 42%, rgba(0, 240, 255, 0.055), transparent 70%),
+    linear-gradient(180deg, rgba(11, 13, 24, 0.55), rgba(4, 5, 10, 0.75));
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+/* corner ticks, HUD style */
+.skills__canvas::before,
+.skills__canvas::after {
+  content: '';
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border: 1px solid var(--line-hot);
+  pointer-events: none;
+  z-index: 3;
+}
+
+.skills__canvas::before {
+  top: 10px;
+  left: 10px;
+  border-right: none;
+  border-bottom: none;
+}
+
+.skills__canvas::after {
+  bottom: 10px;
+  right: 10px;
+  border-left: none;
+  border-top: none;
+}
+
+.skills__canvas canvas {
+  width: 100% !important;
+  height: 100% !important;
+}
+
+.skills__loading {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  color: var(--ink-faint);
+  font-size: 0.6rem;
+}
+
+.skills__hint {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.6rem;
+  z-index: 4;
+  font-size: 0.53rem;
+  letter-spacing: 0.22em;
+  color: var(--ink-faint);
+  pointer-events: none;
+}
+
+/* readout card, bottom-left of the canvas */
+.skills__readout {
+  position: absolute;
+  left: clamp(1rem, 2.5vw, 1.9rem);
+  bottom: clamp(1rem, 2.5vw, 1.9rem);
+  z-index: 4;
+  display: flex;
+  gap: 0.9rem;
+  max-width: min(400px, 72%);
+  padding: 1rem 1.15rem;
+  background: rgba(7, 9, 18, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid var(--line);
+  pointer-events: none;
+  animation: readout-in 0.45s var(--ease-out) both;
+}
+
+@keyframes readout-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+    filter: blur(0);
+  }
+}
+
+.skills__readout-bar {
+  width: 2px;
+  flex: none;
+  border-radius: 2px;
+}
+
+.skills__readout-body .mono {
+  font-size: 0.52rem;
+  letter-spacing: 0.24em;
+}
+
+.skills__readout-body h3 {
+  font-family: var(--f-display);
+  font-size: 1.35rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  margin-top: 0.2rem;
+}
+
+.skills__readout-body p {
+  margin-top: 0.35rem;
+  font-size: 0.86rem;
+  line-height: 1.5;
+  color: var(--ink-dim);
+}
+
+/* floating 3D label (rendered inside the canvas via drei/Html) */
+.sk3d-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.18rem;
+  padding: 0.34rem 0.7rem;
+  background: rgba(4, 5, 10, 0.82);
+  border: 1px solid var(--line-hot);
+  white-space: nowrap;
+  pointer-events: none;
+  transform: translateZ(0);
+}
+
+.sk3d-label__name {
+  font-family: var(--f-display);
+  font-weight: 700;
+  font-size: 0.95rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--ink);
+  line-height: 1;
+}
+
+.sk3d-label__cat {
+  font-family: var(--f-mono);
+  font-size: 0.42rem;
+  letter-spacing: 0.24em;
+  text-transform: uppercase;
+  color: var(--cyan);
+  line-height: 1;
+}
+
+@media (max-width: 900px) {
+  .skills__stage {
+    grid-template-columns: 1fr;
+  }
+
+  .skills__list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    border-left: 1px solid var(--line);
+  }
+
+  .skills__item {
+    border-right: 1px solid var(--line);
+  }
+
+  .skills__readout {
+    max-width: none;
+    right: clamp(1rem, 2.5vw, 1.9rem);
+  }
+
+  /* keep the hint clear of the readout card, which spans the full width here */
+  .skills__hint {
+    top: 0.9rem;
+    right: auto;
+    left: 1.1rem;
+  }
+}

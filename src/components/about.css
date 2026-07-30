@@ -1,0 +1,177 @@
+.about {
+  padding-block: clamp(4rem, 10vh, 8rem) clamp(5rem, 12vh, 9rem);
+}
+
+/* ---------- marquee ---------- */
+
+.marquee {
+  position: relative;
+  left: 50%;
+  width: 100vw;
+  margin-left: -50vw;
+  overflow: hidden;
+  border-block: 1px solid var(--line);
+  padding-block: 0.85rem;
+  margin-bottom: clamp(3rem, 9vh, 7rem);
+  background: rgba(11, 13, 24, 0.4);
+}
+
+.marquee__track {
+  display: flex;
+  width: max-content;
+  animation: marquee 42s linear infinite;
+}
+
+@keyframes marquee {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.marquee__item {
+  display: flex;
+  align-items: center;
+  gap: 1.6rem;
+  padding-right: 1.6rem;
+  font-family: var(--f-display);
+  font-size: clamp(1.1rem, 2.4vw, 1.9rem);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.01em;
+  color: var(--ink-dim);
+  white-space: nowrap;
+}
+
+.marquee__item i {
+  font-style: normal;
+  font-size: 0.5em;
+  color: var(--cyan);
+}
+
+.marquee:hover .marquee__track {
+  animation-play-state: paused;
+}
+
+/* ---------- statement + facts ---------- */
+
+.about__grid {
+  display: grid;
+  grid-template-columns: 1.55fr 1fr;
+  gap: clamp(2rem, 6vw, 6rem);
+  align-items: start;
+}
+
+.about__statement {
+  font-family: var(--f-display);
+  font-size: clamp(1.35rem, 3vw, 2.5rem);
+  font-weight: 500;
+  line-height: 1.28;
+  letter-spacing: -0.02em;
+  text-transform: none;
+  color: var(--ink);
+  text-wrap: balance;
+}
+
+.about__statement span {
+  display: inline;
+}
+
+.about__facts {
+  display: flex;
+  flex-direction: column;
+  gap: 1.6rem;
+  padding-top: 0.6rem;
+}
+
+.about__fact {
+  padding-bottom: 1.4rem;
+  border-bottom: 1px solid var(--line);
+}
+
+.about__fact .mono {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-size: 0.56rem;
+  letter-spacing: 0.26em;
+  color: var(--cyan);
+}
+
+.about__fact p {
+  font-size: 0.98rem;
+  line-height: 1.45;
+  color: var(--ink);
+}
+
+.about__fact-sub {
+  font-size: 0.84rem !important;
+  color: var(--ink-faint) !important;
+}
+
+/* ---------- capability cards ---------- */
+
+.about__caps {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
+  gap: 1px;
+  margin-top: clamp(3.5rem, 9vw, 7rem);
+  background: var(--line);
+  border: 1px solid var(--line);
+}
+
+.cap {
+  position: relative;
+  padding: clamp(1.4rem, 2.6vw, 2.2rem);
+  background: rgba(7, 8, 15, 0.86);
+  overflow: hidden;
+  transition: background-color 0.5s var(--ease-out);
+}
+
+.cap:hover {
+  background: rgba(14, 18, 34, 0.95);
+}
+
+.cap__n {
+  color: var(--ink-faint);
+  font-size: 0.58rem;
+}
+
+.cap__title {
+  margin-top: 1.6rem;
+  font-family: var(--f-display);
+  font-size: 1.16rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: -0.005em;
+}
+
+.cap__body {
+  margin-top: 0.65rem;
+  font-size: 0.87rem;
+  line-height: 1.58;
+  color: var(--ink-dim);
+}
+
+.cap__line {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: linear-gradient(90deg, var(--cyan), var(--magenta));
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease-out);
+}
+
+.cap:hover .cap__line {
+  transform: scaleX(1);
+}
+
+@media (max-width: 880px) {
+  .about__grid {
+    grid-template-columns: 1fr;
+  }
+}
