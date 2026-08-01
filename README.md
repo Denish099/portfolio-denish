@@ -87,8 +87,15 @@ The carousel spaces itself automatically, so no layout maths to update.
   a texture, which avoids shipping a 3D font.
 - **Glass** uses translucency + clearcoat rather than `transmission`; the
   transmission pass leaked a visible rectangle over the scene behind it.
+- **Post-processing** — both scenes run an `EffectComposer` (bloom, chromatic
+  aberration, vignette). Antialiasing lives on the composer via
+  `multisampling={4}`, not `gl.antialias` — with a composer the canvas's own AA
+  never reaches the composed output.
+- **Mirrored floor** — the skills scene's reflective floor is the single most
+  expensive thing on the page. Set `MIRROR_FLOOR = false` at the top of
+  `three/SkillsScene.tsx` to swap it for a flat floor if it feels heavy.
 - **Performance** — each canvas has `frameloop` gated by an IntersectionObserver,
-  so only the visible scene renders. DPR is capped at 1.7–1.75.
+  so only the visible scene renders. DPR is capped at 1.6–1.75.
 - **`prefers-reduced-motion`** skips the preloader, smooth scroll, scroll reveals
   and the grain/sweep overlays.
 

@@ -1,5 +1,7 @@
 import { useMemo, useRef } from 'react';
 import { Canvas, useFrame, useThree } from '@react-three/fiber';
+import { Bloom, ChromaticAberration, EffectComposer } from '@react-three/postprocessing';
+import { BlendFunction, KernelSize } from 'postprocessing';
 import * as THREE from 'three';
 import { ORB_FRAG, ORB_VERT } from './shaders';
 
@@ -167,11 +169,13 @@ function Rig() {
 }
 
 export default function HeroScene({ active = true }: { active?: boolean }) {
+  const chroma = useMemo(() => new THREE.Vector2(0.0008, 0.001), []);
+
   return (
     <Canvas
       dpr={[1, 1.75]}
       camera={{ position: [0, 0, 5.6], fov: 45 }}
-      gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
+      gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
       style={{ pointerEvents: 'none' }}
       frameloop={active ? 'always' : 'never'}
     >
@@ -180,6 +184,23 @@ export default function HeroScene({ active = true }: { active?: boolean }) {
       <Dust />
       <GridFloor />
       <Rig />
+
+      {/* AA lives on the composer, not the canvas — see SkillsScene */}
+      <EffectComposer multisampling={4}>
+        <Bloom
+          intensity={0.9}
+          luminanceThreshold={0.2}
+          luminanceSmoothing={0.5}
+          kernelSize={KernelSize.LARGE}
+          mipmapBlur
+        />
+        <ChromaticAberration
+          offset={chroma}
+          blendFunction={BlendFunction.NORMAL}
+          radialModulation={false}
+          modulationOffset={0}
+        />
+      </EffectComposer>
     </Canvas>
   );
 }
