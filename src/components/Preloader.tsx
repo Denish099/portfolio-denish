@@ -12,6 +12,8 @@ const BOOT_LINES = [
 
 const SCRAMBLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#%&/\\<>[]{}=+*';
 
+const SKIP_EVENTS = ['pointerdown', 'keydown', 'wheel', 'touchmove'] as const;
+
 export default function Preloader({ onDone }: { onDone: () => void }) {
   const root = useRef<HTMLDivElement>(null);
   const nameRef = useRef<HTMLDivElement>(null);
@@ -34,7 +36,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
       const scrambleState = { t: 0 };
       tl.to(scrambleState, {
         t: 1,
-        duration: 1.5,
+        duration: 0.9,
         ease: 'power2.inOut',
         onUpdate: () => {
           const settled = Math.floor(scrambleState.t * target.length);
@@ -54,7 +56,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
 
       // Boot lines type in.
       BOOT_LINES.forEach((_, i) => {
-        tl.call(() => setVisibleLines(i + 1), undefined, 0.22 + i * 0.34);
+        tl.call(() => setVisibleLines(i + 1), undefined, 0.1 + i * 0.17);
       });
 
       // Load bar + percentage.
@@ -62,7 +64,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
         counter,
         {
           v: 100,
-          duration: 2.1,
+          duration: 1.05,
           ease: 'power2.inOut',
           onUpdate: () => {
             const v = Math.round(counter.v);
@@ -70,7 +72,7 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
             if (barRef.current) barRef.current.style.transform = `scaleX(${v / 100})`;
           },
         },
-        0.2,
+        0.1,
       );
 
       // Glitch out, then curtain-wipe away.
@@ -80,17 +82,25 @@ export default function Preloader({ onDone }: { onDone: () => void }) {
           { x: 6, skewX: -2, filter: 'none', duration: 0.06 },
           { x: 0, skewX: 0, duration: 0.06 },
         ],
-        delay: 0.15,
+        delay: 0.05,
       })
         .to('.pl__panel', {
           scaleY: 0,
           transformOrigin: 'top center',
-          duration: 0.85,
+          duration: 0.65,
           ease: 'power4.inOut',
-          stagger: { each: 0.055, from: 'start' },
+          stagger: { each: 0.04, from: 'start' },
         })
-        .call(onDone, undefined, '-=0.35')
+        .call(onDone, undefined, '-=0.3')
         .set(root.current, { pointerEvents: 'none', autoAlpha: 0 });
+
+      // Anyone who clicks, types or tries to scroll is fast-forwarded through.
+      const skip = () => {
+        tl.timeScale(5);
+        SKIP_EVENTS.forEach((ev) => window.removeEventListener(ev, skip));
+      };
+      SKIP_EVENTS.forEach((ev) => window.addEventListener(ev, skip, { passive: true }));
+      return () => SKIP_EVENTS.forEach((ev) => window.removeEventListener(ev, skip));
     }, root);
 
     return () => ctx.revert();

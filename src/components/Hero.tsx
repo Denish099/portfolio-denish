@@ -1,9 +1,14 @@
-import { Suspense, useEffect, useRef } from 'react';
-import HeroScene from '../three/HeroScene';
+import { lazy, Suspense, useEffect, useRef, useState } from 'react';
 import { PROFILE } from '../lib/data';
 import { gsap, prefersReducedMotion } from '../lib/motion';
 import { useInView } from '../lib/useInView';
 import './hero.css';
+
+// three.js, R3F and the post-processing stack are ~1 MB of JS. Loading them in
+// their own chunk keeps them off the critical path: the page paints and the
+// intro plays while the orb streams in behind it.
+const loadScene = () => import('../three/HeroScene');
+const HeroScene = lazy(loadScene);
 
 const SCRAMBLE = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ#%&/\\<>';
 
@@ -45,10 +50,22 @@ function ScrambleWord({ text, className }: { text: string; className?: string })
 export default function Hero({ ready }: { ready: boolean }) {
   const root = useRef<HTMLElement>(null);
   const canvas = useInView<HTMLDivElement>();
+  const [mountScene, setMountScene] = useState(false);
+  const [sceneLive, setSceneLive] = useState(false);
+
+  // Download the chunk right away, but hold off creating the WebGL context:
+  // compiling its shaders blocks the main thread (seconds, on weak GPUs), which
+  // would stall the preloader and the headline intro.
+  useEffect(() => {
+    loadScene();
+  }, []);
 
   useEffect(() => {
     if (!ready) return;
-    if (prefersReducedMotion()) return;
+    if (prefersReducedMotion()) {
+      setMountScene(true);
+      return;
+    }
 
     const ctx = gsap.context(() => {
       const tl = gsap.timeline({ defaults: { ease: 'expo.out' } });
@@ -61,7 +78,9 @@ export default function Hero({ ready }: { ready: boolean }) {
         .from('.hero__meta > *', { y: 22, opacity: 0, duration: 0.9, stagger: 0.08 }, '-=0.75')
         .from('.hero__canvas', { opacity: 0, scale: 1.12, duration: 1.8 }, 0)
         .from('.hero__corner', { opacity: 0, duration: 1, stagger: 0.08 }, '-=1.1')
-        .from('.hero__scroll', { opacity: 0, y: 16, duration: 0.8 }, '-=0.6');
+        .from('.hero__scroll', { opacity: 0, y: 16, duration: 0.8 }, '-=0.6')
+        // the headline has landed by now; bring the orb in behind it
+        .call(() => setMountScene(true), undefined, 0.75);
 
       // parallax the headline as you leave the hero
       gsap.to('.hero__head', {
@@ -83,9 +102,13 @@ export default function Hero({ ready }: { ready: boolean }) {
   return (
     <section className="hero" id="top" ref={root}>
       <div className="hero__canvas" ref={canvas.ref}>
-        <Suspense fallback={null}>
-          <HeroScene active={canvas.inView} />
-        </Suspense>
+        <div className={`hero__gl ${sceneLive ? 'is-live' : ''}`}>
+          {mountScene && (
+            <Suspense fallback={null}>
+              <HeroScene active={canvas.inView} onReady={() => setSceneLive(true)} />
+            </Suspense>
+          )}
+        </div>
       </div>
 
       <span className="hero__corner hero__corner--tl mono">

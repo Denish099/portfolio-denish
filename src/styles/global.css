@@ -255,10 +255,12 @@ section {
   );
 }
 
-/* slow drifting sweep, like a CRT refresh */
+/* slow drifting sweep, like a CRT refresh. Animated with transform, not
+   `top`, so it stays on the compositor instead of re-laying out every frame. */
 .fx-sweep::after {
   content: '';
   position: absolute;
+  top: 0;
   left: 0;
   right: 0;
   height: 34vh;
@@ -269,14 +271,15 @@ section {
     transparent
   );
   animation: sweep 9s linear infinite;
+  will-change: transform;
 }
 
 @keyframes sweep {
   0% {
-    top: -40vh;
+    transform: translateY(-40vh);
   }
   100% {
-    top: 110vh;
+    transform: translateY(110vh);
   }
 }
 

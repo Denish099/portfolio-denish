@@ -156,6 +156,16 @@ function GridFloor() {
   );
 }
 
+/** Reports back once real frames are on screen, i.e. after shader compile. */
+function ReadySignal({ onReady }: { onReady?: () => void }) {
+  const frames = useRef(0);
+  useFrame(() => {
+    frames.current += 1;
+    if (frames.current === 2) onReady?.();
+  });
+  return null;
+}
+
 function Rig() {
   const { camera } = useThree();
   useFrame((state) => {
@@ -168,12 +178,24 @@ function Rig() {
   return null;
 }
 
-export default function HeroScene({ active = true }: { active?: boolean }) {
+/**
+ * Retina screens already render at 1.5x, where 4x MSAA on a full-viewport
+ * composer is a lot of GPU memory and fill for edges you can barely see.
+ */
+const MSAA = typeof window !== 'undefined' && window.devicePixelRatio >= 1.5 ? 2 : 4;
+
+export default function HeroScene({
+  active = true,
+  onReady,
+}: {
+  active?: boolean;
+  onReady?: () => void;
+}) {
   const chroma = useMemo(() => new THREE.Vector2(0.0008, 0.001), []);
 
   return (
     <Canvas
-      dpr={[1, 1.75]}
+      dpr={[1, 1.5]}
       camera={{ position: [0, 0, 5.6], fov: 45 }}
       gl={{ antialias: false, alpha: true, powerPreference: 'high-performance' }}
       style={{ pointerEvents: 'none' }}
@@ -184,9 +206,11 @@ export default function HeroScene({ active = true }: { active?: boolean }) {
       <Dust />
       <GridFloor />
       <Rig />
+      <ReadySignal onReady={onReady} />
 
-      {/* AA lives on the composer, not the canvas — see SkillsScene */}
-      <EffectComposer multisampling={4}>
+      {/* multisampling here rather than gl.antialias: with a composer in play
+          the canvas's own AA never reaches the composed output */}
+      <EffectComposer multisampling={MSAA}>
         <Bloom
           intensity={0.9}
           luminanceThreshold={0.2}

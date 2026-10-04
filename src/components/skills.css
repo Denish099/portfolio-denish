@@ -121,6 +121,8 @@
     linear-gradient(180deg, rgba(11, 13, 24, 0.55), rgba(4, 5, 10, 0.75));
   overflow: hidden;
   touch-action: pan-y;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* corner ticks, HUD style */
@@ -149,18 +151,11 @@
   border-top: none;
 }
 
-.skills__canvas canvas {
-  width: 100% !important;
-  height: 100% !important;
-}
-
-.skills__loading {
+.icloud {
   position: absolute;
   inset: 0;
-  display: grid;
-  place-items: center;
-  color: var(--ink-faint);
-  font-size: 0.6rem;
+  width: 100%;
+  height: 100%;
 }
 
 .skills__hint {
@@ -232,37 +227,30 @@
   color: var(--ink-dim);
 }
 
-/* floating 3D label (rendered inside the canvas via drei/Html) */
-.sk3d-label {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 0.18rem;
+/* name tag that follows the hovered / selected icon — positioned per frame */
+.icloud__tag {
+  position: absolute;
+  top: 0;
+  left: 0;
+  z-index: 3;
   padding: 0.34rem 0.7rem;
   background: rgba(4, 5, 10, 0.82);
   border: 1px solid var(--line-hot);
-  white-space: nowrap;
-  pointer-events: none;
-  transform: translateZ(0);
-}
-
-.sk3d-label__name {
   font-family: var(--f-display);
   font-weight: 700;
-  font-size: 0.95rem;
+  font-size: 0.85rem;
   letter-spacing: 0.02em;
+  line-height: 1;
   text-transform: uppercase;
   color: var(--ink);
-  line-height: 1;
+  white-space: nowrap;
+  pointer-events: none;
+  opacity: 0;
+  will-change: transform, opacity;
 }
 
-.sk3d-label__cat {
-  font-family: var(--f-mono);
-  font-size: 0.42rem;
-  letter-spacing: 0.24em;
-  text-transform: uppercase;
-  color: var(--cyan);
-  line-height: 1;
+.icloud__tag:empty {
+  display: none;
 }
 
 @media (max-width: 900px) {

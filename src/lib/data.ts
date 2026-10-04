@@ -1,3 +1,26 @@
+import {
+  siAmazonaws,
+  siAmazonec2,
+  siAmazons3,
+  siCplusplus,
+  siDocker,
+  siGit,
+  siGithub,
+  siGithubactions,
+  siGo,
+  siJavascript,
+  siJenkins,
+  siKubernetes,
+  siMongodb,
+  siNodedotjs,
+  siPostgresql,
+  siPostman,
+  siPrisma,
+  siReact,
+  siTypescript,
+  type SimpleIcon,
+} from 'simple-icons';
+
 export const PROFILE = {
   name: 'Denish Goyal',
   first: 'Denish',
@@ -22,27 +45,15 @@ export const PROFILE = {
   tagline: 'I build cloud-native systems and the interfaces that make them legible.',
 } as const;
 
-export type IconKind =
-  | 'aws'
-  | 'kubernetes'
-  | 'docker'
-  | 'cicd'
-  | 'react'
-  | 'node'
-  | 'cpp'
-  | 'javascript'
-  | 'typescript'
-  | 'prisma'
-  | 'postgres'
-  | 'mongodb';
-
 export interface Skill {
-  id: IconKind;
+  id: string;
   label: string;
   category: 'Cloud & Infra' | 'Frontend' | 'Backend' | 'Data';
   color: string;
   accent: string;
   blurb: string;
+  /** simple-icons glyph: a single SVG path on a 24×24 viewBox */
+  icon: SimpleIcon;
 }
 
 export const SKILLS: Skill[] = [
@@ -53,6 +64,7 @@ export const SKILLS: Skill[] = [
     color: '#ff9d2e',
     accent: '#ffd08a',
     blurb: 'EC2, S3, ECS and EKS — provisioning and shipping to real infrastructure.',
+    icon: siAmazonaws,
   },
   {
     id: 'kubernetes',
@@ -61,6 +73,7 @@ export const SKILLS: Skill[] = [
     color: '#3d7dff',
     accent: '#9dc0ff',
     blurb: 'Deployments, services and cluster state — driven from client-go.',
+    icon: siKubernetes,
   },
   {
     id: 'docker',
@@ -69,6 +82,7 @@ export const SKILLS: Skill[] = [
     color: '#2fb3f0',
     accent: '#a8e2ff',
     blurb: 'Container images and multi-service local stacks that mirror prod.',
+    icon: siDocker,
   },
   {
     id: 'cicd',
@@ -77,6 +91,7 @@ export const SKILLS: Skill[] = [
     color: '#b8ff3a',
     accent: '#e2ff9d',
     blurb: 'GitHub Actions and Jenkins pipelines — build, test, gate, release.',
+    icon: siGithubactions,
   },
   {
     id: 'react',
@@ -85,6 +100,7 @@ export const SKILLS: Skill[] = [
     color: '#3ee0ff',
     accent: '#b3f4ff',
     blurb: 'Component systems, canvas-heavy UI and interaction-led interfaces.',
+    icon: siReact,
   },
   {
     id: 'typescript',
@@ -93,6 +109,7 @@ export const SKILLS: Skill[] = [
     color: '#4a8dff',
     accent: '#a8c8ff',
     blurb: 'Types as design — the contract I write before the implementation.',
+    icon: siTypescript,
   },
   {
     id: 'javascript',
@@ -101,6 +118,7 @@ export const SKILLS: Skill[] = [
     color: '#ffcf34',
     accent: '#ffe89a',
     blurb: 'The language I reach for first, from DOM plumbing to WebGL.',
+    icon: siJavascript,
   },
   {
     id: 'node',
@@ -109,6 +127,7 @@ export const SKILLS: Skill[] = [
     color: '#5fd75f',
     accent: '#b6f0b6',
     blurb: 'REST services, auth flows and the glue between clients and data.',
+    icon: siNodedotjs,
   },
   {
     id: 'cpp',
@@ -117,6 +136,7 @@ export const SKILLS: Skill[] = [
     color: '#ff5f8f',
     accent: '#ffb0c6',
     blurb: 'Where I learned data structures, memory and algorithmic cost.',
+    icon: siCplusplus,
   },
   {
     id: 'postgres',
@@ -125,6 +145,7 @@ export const SKILLS: Skill[] = [
     color: '#4b9dd6',
     accent: '#a9d6f0',
     blurb: 'Relational schema design, indexes and queries that stay fast.',
+    icon: siPostgresql,
   },
   {
     id: 'prisma',
@@ -133,6 +154,7 @@ export const SKILLS: Skill[] = [
     color: '#8b5cff',
     accent: '#c9b3ff',
     blurb: 'Typed data access with migrations that are safe to run twice.',
+    icon: siPrisma,
   },
   {
     id: 'mongodb',
@@ -141,7 +163,29 @@ export const SKILLS: Skill[] = [
     color: '#4fd97a',
     accent: '#b0f2c4',
     blurb: 'Document modelling for content that refuses to sit in columns.',
+    icon: siMongodb,
   },
+];
+
+/**
+ * Supporting tools that appear in the icon cloud alongside SKILLS but have no
+ * list row or readout of their own — each one is named elsewhere on the page.
+ */
+export interface Tool {
+  id: string;
+  label: string;
+  color: string;
+  icon: SimpleIcon;
+}
+
+export const TOOLS: Tool[] = [
+  { id: 'go', label: 'Go', color: '#29c8f2', icon: siGo },
+  { id: 'jenkins', label: 'Jenkins', color: '#f0705a', icon: siJenkins },
+  { id: 'ec2', label: 'Amazon EC2', color: '#ffad3a', icon: siAmazonec2 },
+  { id: 's3', label: 'Amazon S3', color: '#7fc95a', icon: siAmazons3 },
+  { id: 'git', label: 'Git', color: '#ff6a4a', icon: siGit },
+  { id: 'github', label: 'GitHub', color: '#d6dcf0', icon: siGithub },
+  { id: 'postman', label: 'Postman', color: '#ff8a5c', icon: siPostman },
 ];
 
 export interface Project {

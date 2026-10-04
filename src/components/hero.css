@@ -19,6 +19,18 @@
   height: 100% !important;
 }
 
+/* the scene arrives in a lazy chunk; fade it in rather than popping */
+.hero__gl {
+  position: absolute;
+  inset: 0;
+  opacity: 0;
+  transition: opacity 1.4s var(--ease-out);
+}
+
+.hero__gl.is-live {
+  opacity: 1;
+}
+
 /* corner HUD labels */
 .hero__corner {
   position: absolute;
